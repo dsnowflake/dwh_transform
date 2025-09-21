@@ -1,9 +1,11 @@
 name: dbt Run on Push
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
   run-dbt:
@@ -37,6 +39,9 @@ jobs:
                 threads: 1
                 client_session_keep_alive: false
           EOF
+      
+      - name: Check packages.yml
+        run: cat packages.yml || echo "No packages.yml found"
       
       - name: Install dbt dependencies
         run: dbt deps --profiles-dir ~/.dbt
