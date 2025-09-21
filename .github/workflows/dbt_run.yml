@@ -1,5 +1,4 @@
 name: dbt Run on Push
-
 on:
   push:
     branches: [main]
