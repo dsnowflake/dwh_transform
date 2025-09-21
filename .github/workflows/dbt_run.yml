@@ -1,28 +1,29 @@
 name: dbt Run on Push
+
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   run-dbt:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-
+      
       - name: Install dbt-snowflake
         run: pip install dbt-snowflake
-
-      - name: Create profiles.yml
+      
+      - name: Create profiles directory and file
         run: |
           mkdir -p ~/.dbt
-          echo "dbt_snowflake_profile:
+          cat > ~/.dbt/profiles.yml << EOF
+          dwh_transform:
             target: dev
             outputs:
               dev:
@@ -35,7 +36,11 @@ jobs:
                 warehouse: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
                 schema: ${{ secrets.SNOWFLAKE_SCHEMA }}
                 threads: 1
-                client_session_keep_alive: false" > ~/.dbt/profiles.yml
-
-      - name: dbt run
+                client_session_keep_alive: false
+          EOF
+      
+      - name: Verify dbt connection
+        run: dbt debug --profiles-dir ~/.dbt
+      
+      - name: Run dbt models
         run: dbt run --profiles-dir ~/.dbt
