@@ -38,4 +38,4 @@ jobs:
                 client_session_keep_alive: false" > ~/.dbt/profiles.yml
 
       - name: dbt run
-        run: dbt run --full-refresh --profiles-dir ~/.dbt
+        run: dbt run --profiles-dir ~/.dbt
