@@ -39,6 +39,9 @@ jobs:
                 client_session_keep_alive: false
           EOF
       
+      - name: Install dbt dependencies
+        run: dbt deps --profiles-dir ~/.dbt
+      
       - name: Verify dbt connection
         run: dbt debug --profiles-dir ~/.dbt
       
